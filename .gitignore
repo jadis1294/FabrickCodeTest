@@ -1,0 +1,57 @@
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+
+bin
+.mvn
+.idea/
+*.iml
+log.basePath_IS_UNDEFINED/
+logs/
+target/
+.metadata/
+*.classpath
+*.settings
+*.springBeans
+*.project
+*.fdt
+*.class
+.recommenders/
+*.springWebflow
+.DS_Store
+/LOG_PATH_IS_UNDEFINED/
+gen/
+src/main/resources/swagger.yaml
+src/main/java/META-INF/sun-jaxb.episode
+**/sonar-report/*
