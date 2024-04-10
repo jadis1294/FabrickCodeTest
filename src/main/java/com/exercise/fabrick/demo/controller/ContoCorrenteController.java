@@ -1,5 +1,7 @@
 package com.exercise.fabrick.demo.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +26,7 @@ import com.exercise.fabrick.demo.service.ContoCorrenteService;
 @RestController
 @RequestMapping(produces = { MediaType.APPLICATION_JSON_VALUE, "application/hal+json" })
 public class ContoCorrenteController {
+	private static final Logger logger = LoggerFactory.getLogger(ContoCorrenteController.class);
 	@Autowired
 	private ContoCorrenteService contoCorrenteService;
 
@@ -33,10 +36,10 @@ public class ContoCorrenteController {
 			@RequestHeader(value = "Auth-Schema", required = true) String authSchema,
 			@PathVariable(value = "accountId") String accountId) throws Exception {
 		try {
+			logger.info("[ContoCorrenteController][getSaldoContoCorrente] - called");
 			ContoCorrenteResponse response = contoCorrenteService.getSaldoContoCorrente(accountId, apiKey, authSchema);
 			return ResponseEntity.ok().body(response);
 		} catch (RecordNotFoundException e) {
-			e.printStackTrace();
 			return ResponseEntity.ok()
 					.body(new ContoCorrenteResponse(ResponseResource.RETCODE_ERRORE_NOT_FOUND, e.getMsgRetCode()));
 		}
@@ -50,10 +53,10 @@ public class ContoCorrenteController {
 			@PathVariable(value = "accountId") String accountId,
 			@RequestBody InviaBonificoRequest request) throws Exception {
 		try {
+			logger.info("[ContoCorrenteController][invioBonifico] - called");
 			InviaBonificoResponse response = contoCorrenteService.invioBonifico(accountId, apiKey, authSchema, request);
 			return ResponseEntity.ok().body(response);
 		} catch (FabrickException e) {
-			e.printStackTrace();
 			return ResponseEntity.ok()
 					.body(new InviaBonificoResponse(ResponseResource.RETCODE_ERRORE_GENERICO,  e.getMsgRetCode()));
 		}
@@ -67,16 +70,15 @@ public class ContoCorrenteController {
 			@RequestParam(name = "fromAccountingDate") String fromAccountingDate,
 			@RequestParam(name = "fromAccountingDate") String toAccountingDate) throws Exception {
 		try {
+			logger.info("[ContoCorrenteController][getListaTransazioni] - called");
 			ListaTransazioniResponse response = contoCorrenteService.getListaTransizioni(accountId, fromAccountingDate,
 					toAccountingDate,apiKey,authSchema);
 			return ResponseEntity.ok().body(response);
 		} catch (RecordNotFoundException e) {
-			e.printStackTrace();
 			return ResponseEntity.ok()
 					.body(new ListaTransazioniResponse(ResponseResource.RETCODE_ERRORE_NOT_FOUND, e.getMsgRetCode()));
 		}
 		catch (FabrickException e) {
-			e.printStackTrace();
 			return ResponseEntity.ok()
 					.body(new ListaTransazioniResponse(ResponseResource.RETCODE_ERRORE_GENERICO,  e.getMsgRetCode()));
 		}

@@ -2,6 +2,8 @@ package com.exercise.fabrick.demo.service;
 
 import java.text.SimpleDateFormat;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.exercise.fabrick.demo.exception.FabrickException;
@@ -18,6 +20,7 @@ import com.exercise.fabrick.demo.service.caller.ContoCorrenteServiceCaller;
 
 @Service
 public class ContoCorrenteServiceImpl implements ContoCorrenteService {
+	private static final Logger logger = LoggerFactory.getLogger(ContoCorrenteServiceImpl.class);
 	private static final String YYYYMMDD = "YYYY-MM-DD";
 	final SimpleDateFormat formatter = new SimpleDateFormat(YYYYMMDD);
 
@@ -43,6 +46,7 @@ public class ContoCorrenteServiceImpl implements ContoCorrenteService {
 		ListaTransazioniResponse listaTransazioniResponse = caller.getListaTransizioni(accountId, fromAccountingDate,
 				toAccountingDate, apiKey, authSchema);
 		if (listaTransazioniResponse == null) {
+			logger.error("errore durante il recupero delle transazioni");
 			throw new RecordNotFoundException("errore durante il recupero delle transazioni");
 		}
 		if (listaTransazioniResponse.getList()!=null && !listaTransazioniResponse.getList().isEmpty()) {
@@ -65,6 +69,7 @@ public class ContoCorrenteServiceImpl implements ContoCorrenteService {
 			throws RecordNotFoundException {
 		ContoCorrenteResponse contoCorrenteResponse = caller.getSaldo(accountId, apiKey, authSchema);
 		if (contoCorrenteResponse == null) {
+			logger.error("errore durante il recupero del saldo del conto corrente");
 			throw new RecordNotFoundException("errore durante il recupero del saldo del conto corrente");
 		}
 		contoCorrenteResponse.setRetCode(ResponseResource.RETCODE_OPERAZIONE_CONCLUSA_CON_SUCCESSO);
@@ -91,6 +96,7 @@ public class ContoCorrenteServiceImpl implements ContoCorrenteService {
 		invioBonificoPreliminaryCheck(request);
 		InviaBonificoResponse inviaBonificoResponse = caller.invioBonifico(accountId,apiKey,authSchema,request);
 		if (inviaBonificoResponse == null) {
+			logger.error("errore durante il salvataggio del bonifico");
 			throw new FabrickException("errore durante il salvataggio del bonifico", ResponseResource.RETCODE_ERRORE_GENERICO);
 		}
 		inviaBonificoResponse.setRetCode(ResponseResource.RETCODE_OPERAZIONE_CONCLUSA_CON_SUCCESSO);
@@ -129,6 +135,7 @@ public class ContoCorrenteServiceImpl implements ContoCorrenteService {
 	}
 
 	private void saveTransazionedB(Transazione transazione) throws FabrickException {
+		
 		Transazioni transazioneDB = new Transazioni(
 				transazione.getTransactionId(),
 				transazione.getOperationId(),
@@ -140,6 +147,7 @@ public class ContoCorrenteServiceImpl implements ContoCorrenteService {
 		try {
 			transazioniRepository.save(transazioneDB);
 		} catch (Exception e) {
+			logger.error("errore durante il salvataggio della transazion a db", e);
 			throw new FabrickException("errore durante il salvataggio",
 					ResponseResource.RETCODE_ERRORE_GENERICO, e);
 		}
