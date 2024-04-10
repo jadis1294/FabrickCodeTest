@@ -22,6 +22,7 @@ import com.exercise.fabrick.demo.model.response.InviaBonificoResponse;
 import com.exercise.fabrick.demo.model.response.ListaTransazioniResponse;
 import com.exercise.fabrick.demo.model.response.ResponseResource;
 import com.exercise.fabrick.demo.service.ContoCorrenteService;
+import com.exercise.fabrick.demo.utils.ContoCorrenteUtils;
 
 @RestController
 @RequestMapping(produces = { MediaType.APPLICATION_JSON_VALUE, "application/hal+json" })
@@ -32,8 +33,8 @@ public class ContoCorrenteController {
 
 	@GetMapping("/getSaldoContoCorrente/{accountId}")
 	public ResponseEntity<ContoCorrenteResponse> getSaldoContoCorrente(
-			@RequestHeader(value = "Api-Key", required = true) String apiKey,
-			@RequestHeader(value = "Auth-Schema", required = true) String authSchema,
+			@RequestHeader(value = ContoCorrenteUtils.API_KEY, required = true) String apiKey,
+			@RequestHeader(value = ContoCorrenteUtils.AUTH_SCHEMA, required = true) String authSchema,
 			@PathVariable(value = "accountId") String accountId) throws Exception {
 		try {
 			logger.info("[ContoCorrenteController][getSaldoContoCorrente] - called");
@@ -48,8 +49,8 @@ public class ContoCorrenteController {
 
 	@PostMapping("/inviaBonifico/{accountId}")
 	public ResponseEntity<InviaBonificoResponse> invioBonifico(
-			@RequestHeader(value = "Api-Key", required = true) String apiKey,
-			@RequestHeader(value = "Auth-Schema", required = true) String authSchema,
+			@RequestHeader(value = ContoCorrenteUtils.API_KEY, required = true) String apiKey,
+			@RequestHeader(value = ContoCorrenteUtils.AUTH_SCHEMA, required = true) String authSchema,
 			@PathVariable(value = "accountId") String accountId,
 			@RequestBody InviaBonificoRequest request) throws Exception {
 		try {
@@ -64,8 +65,8 @@ public class ContoCorrenteController {
 
 	@GetMapping("/getListaTransazioni/{accountId}")
 	public ResponseEntity<ListaTransazioniResponse> getListaTransazioni(
-			@RequestHeader(value = "Api-Key", required = true) String apiKey,
-			@RequestHeader(value = "Auth-Schema", required = true) String authSchema,
+			@RequestHeader(value = ContoCorrenteUtils.API_KEY, required = true) String apiKey,
+			@RequestHeader(value = ContoCorrenteUtils.AUTH_SCHEMA, required = true) String authSchema,
 			@PathVariable(value = "accountId") String accountId,
 			@RequestParam(name = "fromAccountingDate") String fromAccountingDate,
 			@RequestParam(name = "fromAccountingDate") String toAccountingDate) throws Exception {

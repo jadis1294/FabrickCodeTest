@@ -1,10 +1,17 @@
 package com.exercise.fabrick.demo.model.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class InviaBonificoRequest {
+	@JsonProperty
 	private Creditor creditor;
+	@JsonProperty
 	private String description;
+	@JsonProperty
 	private String currency;
+	@JsonProperty
 	private String amount;
+	@JsonProperty
 	private String executionDate;
 	public Creditor getCreditor() {
 		return creditor;

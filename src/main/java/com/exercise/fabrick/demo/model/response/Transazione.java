@@ -2,6 +2,8 @@ package com.exercise.fabrick.demo.model.response;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  *    {
  *     "transactionId": "1331714087",
@@ -20,12 +22,19 @@ import java.util.Date;
  *
  */
 public class Transazione {
+	@JsonProperty
 	private String transactionId;
+	@JsonProperty
 	private String operationId;
+	@JsonProperty
 	private Date accountingDate;
+	@JsonProperty
 	private Date valueDate;
+	@JsonProperty
 	private double amount;
+	@JsonProperty
 	private String currency;
+	@JsonProperty
 	private String description;
 	
 	

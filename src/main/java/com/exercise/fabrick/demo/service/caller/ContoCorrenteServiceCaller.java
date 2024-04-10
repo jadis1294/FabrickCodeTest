@@ -10,6 +10,7 @@ import com.exercise.fabrick.demo.model.request.InviaBonificoRequest;
 import com.exercise.fabrick.demo.model.response.ContoCorrenteResponse;
 import com.exercise.fabrick.demo.model.response.InviaBonificoResponse;
 import com.exercise.fabrick.demo.model.response.ListaTransazioniResponse;
+import com.exercise.fabrick.demo.utils.ContoCorrenteUtils;
 
 import reactor.core.publisher.Mono;
 
@@ -25,12 +26,12 @@ public class ContoCorrenteServiceCaller {
         try{
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/api/gbs/banking/v4.0/accounts/{accountId}/transactions")
+                        .path(ContoCorrenteUtils.URL_GET_LISTA_TRANSIZIONI)
                         .queryParam("fromAccountingDate", fromAccountingDate)
                         .queryParam("toAccountingDate", toAccountingDate)
                         .build(accountId))
-                .header("Auth-Schema", authSchema)
-                .header("Api-Key", apiKey)
+                        .header(ContoCorrenteUtils.AUTH_SCHEMA, authSchema)
+                        .header(ContoCorrenteUtils.API_KEY, apiKey)
                 .retrieve()
                 .bodyToMono(ListaTransazioniResponse.class)
                 .block();
@@ -43,9 +44,9 @@ public class ContoCorrenteServiceCaller {
     public ContoCorrenteResponse getSaldo(String accountId, String apiKey, String authSchema) {
         try {
             return webClient.get()
-                    .uri("/api/gbs/banking/v4.0/accounts/{accountId}/balance", accountId)
-                    .header("Auth-Schema", authSchema)
-                    .header("Api-Key", apiKey)
+                    .uri(ContoCorrenteUtils.URL_GET_SALDO, accountId)
+                    .header(ContoCorrenteUtils.AUTH_SCHEMA, authSchema)
+                    .header(ContoCorrenteUtils.API_KEY, apiKey)
                     .retrieve()
                     .bodyToMono(ContoCorrenteResponse.class)
                     .block();
@@ -59,9 +60,9 @@ public class ContoCorrenteServiceCaller {
             InviaBonificoRequest request) {
         try {
             return webClient.post()
-                    .uri("/api/gbs/banking/v4.0/accounts/{accountId}/payments/money-transfers", accountId)
-                    .header("Auth-Schema", authSchema)
-                    .header("Api-Key", apiKey)
+                    .uri(ContoCorrenteUtils.URL_GET_INVIO_BONIFICO, accountId)
+                    .header(ContoCorrenteUtils.AUTH_SCHEMA, authSchema)
+                    .header(ContoCorrenteUtils.API_KEY, apiKey)
                     .body(Mono.just(request), InviaBonificoRequest.class)
                     .retrieve()
                     .bodyToMono(InviaBonificoResponse.class)

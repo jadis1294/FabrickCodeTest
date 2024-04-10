@@ -2,6 +2,8 @@ package com.exercise.fabrick.demo.model.response;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * {
  *  "list": [
@@ -37,6 +39,7 @@ import java.util.List;
  *
  */
 public class ListaTransazioniResponse extends ResponseResource{
+	@JsonProperty
 	public List<Transazione> getList() {
 		return list;
 	}

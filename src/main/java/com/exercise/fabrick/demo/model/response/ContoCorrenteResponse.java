@@ -2,6 +2,8 @@ package com.exercise.fabrick.demo.model.response;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * {
  * 	"date": "2018-08-17",
@@ -13,9 +15,13 @@ import java.util.Date;
  *
  */
 public class ContoCorrenteResponse extends ResponseResource{
+	@JsonProperty
 	private Date date;
+	@JsonProperty
 	private double balance;
+	@JsonProperty
 	private double availableBalance;
+	@JsonProperty
 	private String currency;
 	
 	

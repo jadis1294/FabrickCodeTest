@@ -1,7 +1,5 @@
 package com.exercise.fabrick.demo.service;
 
-import java.text.SimpleDateFormat;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +15,11 @@ import com.exercise.fabrick.demo.model.response.Transazione;
 import com.exercise.fabrick.demo.persistence.entity.Transazioni;
 import com.exercise.fabrick.demo.persistence.repository.TransazioniRepository;
 import com.exercise.fabrick.demo.service.caller.ContoCorrenteServiceCaller;
+import com.exercise.fabrick.demo.utils.ContoCorrenteUtils;
 
 @Service
 public class ContoCorrenteServiceImpl implements ContoCorrenteService {
 	private static final Logger logger = LoggerFactory.getLogger(ContoCorrenteServiceImpl.class);
-	private static final String YYYYMMDD = "YYYY-MM-DD";
-	final SimpleDateFormat formatter = new SimpleDateFormat(YYYYMMDD);
-
 	@Autowired
 	TransazioniRepository transazioniRepository;
 	@Autowired
@@ -39,18 +35,18 @@ public class ContoCorrenteServiceImpl implements ContoCorrenteService {
 	 * Output: Lista delle transazioni
 	 */
 	@Override
-	public ListaTransazioniResponse getListaTransizioni(String accountId, String fromAccountingDate,
-			String toAccountingDate, String apiKey, String authSchema)
+	public ListaTransazioniResponse getListaTransizioni(final String accountId, final String fromAccountingDate,
+			final String toAccountingDate, final String apiKey, final String authSchema)
 			throws FabrickException, RecordNotFoundException {
 		listaTransazioniPreliminaryCheck(accountId, fromAccountingDate, toAccountingDate);
-		ListaTransazioniResponse listaTransazioniResponse = caller.getListaTransizioni(accountId, fromAccountingDate,
+		final ListaTransazioniResponse listaTransazioniResponse = caller.getListaTransizioni(accountId, fromAccountingDate,
 				toAccountingDate, apiKey, authSchema);
 		if (listaTransazioniResponse == null) {
-			logger.error("errore durante il recupero delle transazioni");
-			throw new RecordNotFoundException("errore durante il recupero delle transazioni");
+			logger.error(ContoCorrenteUtils.ERRORE_RECUPERO_TRANSAZIONI);
+			throw new RecordNotFoundException(ContoCorrenteUtils.ERRORE_RECUPERO_TRANSAZIONI);
 		}
 		if (listaTransazioniResponse.getList()!=null && !listaTransazioniResponse.getList().isEmpty()) {
-			for (Transazione transazione : listaTransazioniResponse.getList()) {
+			for (final Transazione transazione : listaTransazioniResponse.getList()) {
 				saveTransazionedB(transazione);
 			}
 		}
@@ -65,12 +61,12 @@ public class ContoCorrenteServiceImpl implements ContoCorrenteService {
 	 * o Output: Visualizzare il saldo
 	 */
 	@Override
-	public ContoCorrenteResponse getSaldoContoCorrente(String accountId, String apiKey, String authSchema)
+	public ContoCorrenteResponse getSaldoContoCorrente(final String accountId, final String apiKey, final String authSchema)
 			throws RecordNotFoundException {
-		ContoCorrenteResponse contoCorrenteResponse = caller.getSaldo(accountId, apiKey, authSchema);
+		final ContoCorrenteResponse contoCorrenteResponse = caller.getSaldo(accountId, apiKey, authSchema);
 		if (contoCorrenteResponse == null) {
-			logger.error("errore durante il recupero del saldo del conto corrente");
-			throw new RecordNotFoundException("errore durante il recupero del saldo del conto corrente");
+			logger.error(ContoCorrenteUtils.ERRORE_RECUPERO_SALDO);
+			throw new RecordNotFoundException(ContoCorrenteUtils.ERRORE_RECUPERO_SALDO);
 		}
 		contoCorrenteResponse.setRetCode(ResponseResource.RETCODE_OPERAZIONE_CONCLUSA_CON_SUCCESSO);
 		return contoCorrenteResponse;
@@ -91,19 +87,19 @@ public class ContoCorrenteServiceImpl implements ContoCorrenteService {
 	 * o {executionDate}:String YYYY-MM-DD
 	 */
 	@Override
-	public InviaBonificoResponse invioBonifico(String accountId, String apiKey, String authSchema,
-			InviaBonificoRequest request) throws FabrickException {
+	public InviaBonificoResponse invioBonifico(final String accountId, final String apiKey, final String authSchema,
+			final InviaBonificoRequest request) throws FabrickException {
 		invioBonificoPreliminaryCheck(request);
-		InviaBonificoResponse inviaBonificoResponse = caller.invioBonifico(accountId,apiKey,authSchema,request);
+		final InviaBonificoResponse inviaBonificoResponse = caller.invioBonifico(accountId,apiKey,authSchema,request);
 		if (inviaBonificoResponse == null) {
-			logger.error("errore durante il salvataggio del bonifico");
-			throw new FabrickException("errore durante il salvataggio del bonifico", ResponseResource.RETCODE_ERRORE_GENERICO);
+			logger.error(ContoCorrenteUtils.ERRORE_INVIO_BONIFICO);
+			throw new FabrickException(ContoCorrenteUtils.ERRORE_INVIO_BONIFICO, ResponseResource.RETCODE_ERRORE_GENERICO);
 		}
 		inviaBonificoResponse.setRetCode(ResponseResource.RETCODE_OPERAZIONE_CONCLUSA_CON_SUCCESSO);
 		return inviaBonificoResponse;
 	}
 
-	private void invioBonificoPreliminaryCheck(InviaBonificoRequest request) throws FabrickException {
+	private void invioBonificoPreliminaryCheck(final InviaBonificoRequest request) throws FabrickException {
 		if (request == null
 				|| request.getAmount() == null
 				|| request.getCreditor() == null
@@ -112,31 +108,31 @@ public class ContoCorrenteServiceImpl implements ContoCorrenteService {
 				|| request.getCurrency() == null
 				|| request.getDescription() == null
 				|| request.getExecutionDate() == null) {
-			throw new FabrickException("Dati in input non corretti", ResponseResource.RETCODE_INPUT_NON_COERENTE);
+			throw new FabrickException(ContoCorrenteUtils.ERRORE_DATI_INPUT, ResponseResource.RETCODE_INPUT_NON_COERENTE);
 		}
 		try {
-			formatter.parse(request.getExecutionDate());
-		} catch (Exception e) {
-			throw new FabrickException("Formato data non coerente", ResponseResource.RETCODE_INPUT_NON_COERENTE);
+			ContoCorrenteUtils.formatter.parse(request.getExecutionDate());
+		} catch (final Exception e) {
+			throw new FabrickException(ContoCorrenteUtils.ERRORE_FORMATO_DATA, ResponseResource.RETCODE_INPUT_NON_COERENTE);
 		}
 	}
 
-	private void listaTransazioniPreliminaryCheck(String accountId, String fromAccountingDate,
-			String toAccountingDate) throws FabrickException {
+	private void listaTransazioniPreliminaryCheck(final String accountId, final String fromAccountingDate,
+			final String toAccountingDate) throws FabrickException {
 		if (fromAccountingDate == null || toAccountingDate == null || accountId == null) {
-			throw new FabrickException("Dati in input non corretti", ResponseResource.RETCODE_INPUT_NON_COERENTE);
+			throw new FabrickException(ContoCorrenteUtils.ERRORE_DATI_INPUT, ResponseResource.RETCODE_INPUT_NON_COERENTE);
 		}
 		try {
-			formatter.parse(fromAccountingDate);
-			formatter.parse(toAccountingDate);
-		} catch (Exception e) {
-			throw new FabrickException("Formato date non coerente", ResponseResource.RETCODE_INPUT_NON_COERENTE);
+			ContoCorrenteUtils.formatter.parse(fromAccountingDate);
+			ContoCorrenteUtils.formatter.parse(toAccountingDate);
+		} catch (final Exception e) {
+			throw new FabrickException(ContoCorrenteUtils.ERRORE_FORMATO_DATA, ResponseResource.RETCODE_INPUT_NON_COERENTE);
 		}
 	}
 
-	private void saveTransazionedB(Transazione transazione) throws FabrickException {
+	private void saveTransazionedB(final Transazione transazione) throws FabrickException {
 		
-		Transazioni transazioneDB = new Transazioni(
+		final Transazioni transazioneDB = new Transazioni(
 				transazione.getTransactionId(),
 				transazione.getOperationId(),
 				transazione.getAccountingDate(),
@@ -146,9 +142,9 @@ public class ContoCorrenteServiceImpl implements ContoCorrenteService {
 				transazione.getDescription());
 		try {
 			transazioniRepository.save(transazioneDB);
-		} catch (Exception e) {
-			logger.error("errore durante il salvataggio della transazion a db", e);
-			throw new FabrickException("errore durante il salvataggio",
+		} catch (final Exception e) {
+			logger.error(ContoCorrenteUtils.ERRORE_SALVATAGGIO_DB, e);
+			throw new FabrickException(ContoCorrenteUtils.ERRORE_SALVATAGGIO_DB,
 					ResponseResource.RETCODE_ERRORE_GENERICO, e);
 		}
 	}

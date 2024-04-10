@@ -1,7 +1,11 @@
 package com.exercise.fabrick.demo.model.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Creditor {
+	@JsonProperty
 	private String name;
+	@JsonProperty
 	private Account account;
 	public String getName() {
 		return name;

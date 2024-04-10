@@ -1,11 +1,17 @@
 package com.exercise.fabrick.demo.model.response;
 
-public class InviaBonificoResponse extends ResponseResource{
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+public class InviaBonificoResponse extends ResponseResource{
+	@JsonProperty
 	private String moneyTransferId;
+	@JsonProperty
 	private String status;
+	@JsonProperty
 	private String direction;
+	@JsonProperty
 	private String code;
+	@JsonProperty
 	private String description;
 	
 	public String getMoneyTransferId() {
