@@ -5,6 +5,7 @@ public class ResponseResource {
     public static final String RETCODE_OPERAZIONE_CONCLUSA_CON_SUCCESSO="00";
     public static final String RETCODE_ERRORE_GENERICO="99";
 	public static final String RETCODE_ERRORE_NOT_FOUND="04";
+	public static final String RETCODE_INPUT_NON_COERENTE = "03";
     private String retCode;
 
 	private String msgRetCode;

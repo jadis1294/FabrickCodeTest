@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.exercise.fabrick.demo.exception.FabrickException;
+import com.exercise.fabrick.demo.exception.RecordNotFoundException;
 import com.exercise.fabrick.demo.model.request.InviaBonificoRequest;
 import com.exercise.fabrick.demo.model.response.ContoCorrenteResponse;
 import com.exercise.fabrick.demo.model.response.InviaBonificoResponse;
@@ -33,10 +35,10 @@ public class ContoCorrenteController {
 		try {
 			ContoCorrenteResponse response = contoCorrenteService.getSaldoContoCorrente(accountId, apiKey, authSchema);
 			return ResponseEntity.ok().body(response);
-		} catch (Exception e) {
+		} catch (RecordNotFoundException e) {
 			e.printStackTrace();
 			return ResponseEntity.ok()
-					.body(new ContoCorrenteResponse(ResponseResource.RETCODE_ERRORE_NOT_FOUND, "da cambiare e.getMsgRetCode()"));
+					.body(new ContoCorrenteResponse(ResponseResource.RETCODE_ERRORE_NOT_FOUND, e.getMsgRetCode()));
 		}
 
 	}
@@ -50,10 +52,10 @@ public class ContoCorrenteController {
 		try {
 			InviaBonificoResponse response = contoCorrenteService.invioBonifico(accountId, apiKey, authSchema, request);
 			return ResponseEntity.ok().body(response);
-		} catch (Exception e) {
+		} catch (FabrickException e) {
 			e.printStackTrace();
 			return ResponseEntity.ok()
-					.body(new InviaBonificoResponse(ResponseResource.RETCODE_ERRORE_NOT_FOUND, "da cambiare e.getMsgRetCode()"));
+					.body(new InviaBonificoResponse(ResponseResource.RETCODE_ERRORE_GENERICO,  e.getMsgRetCode()));
 		}
 	}
 
@@ -68,10 +70,15 @@ public class ContoCorrenteController {
 			ListaTransazioniResponse response = contoCorrenteService.getListaTransizioni(accountId, fromAccountingDate,
 					toAccountingDate,apiKey,authSchema);
 			return ResponseEntity.ok().body(response);
-		} catch (Exception e) {
+		} catch (RecordNotFoundException e) {
 			e.printStackTrace();
 			return ResponseEntity.ok()
-					.body(new ListaTransazioniResponse(ResponseResource.RETCODE_ERRORE_NOT_FOUND, "da cambiare e.getMsgRetCode()"));
+					.body(new ListaTransazioniResponse(ResponseResource.RETCODE_ERRORE_NOT_FOUND, e.getMsgRetCode()));
+		}
+		catch (FabrickException e) {
+			e.printStackTrace();
+			return ResponseEntity.ok()
+					.body(new ListaTransazioniResponse(ResponseResource.RETCODE_ERRORE_GENERICO,  e.getMsgRetCode()));
 		}
 	}
 
