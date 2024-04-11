@@ -95,6 +95,12 @@ public class ContoCorrenteServiceImpl implements ContoCorrenteService {
 			logger.error(ContoCorrenteUtils.ERRORE_INVIO_BONIFICO);
 			throw new FabrickException(ContoCorrenteUtils.ERRORE_INVIO_BONIFICO, ResponseResource.RETCODE_ERRORE_GENERICO);
 		}
+		if(inviaBonificoResponse.getStatus().equals("KO")){
+			inviaBonificoResponse.setCode("API000");
+			inviaBonificoResponse.setDescription("Errore tecnico La condizione BP049 non è prevista per il conto id " + accountId);
+			inviaBonificoResponse.setRetCode(ResponseResource.RETCODE_OPERAZIONE_CONCLUSA_CON_SUCCESSO);
+			return inviaBonificoResponse;
+		}
 		inviaBonificoResponse.setRetCode(ResponseResource.RETCODE_OPERAZIONE_CONCLUSA_CON_SUCCESSO);
 		return inviaBonificoResponse;
 	}
